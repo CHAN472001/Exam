@@ -121,7 +121,7 @@ public class StudentDAO extends DAO {
         return list;
     }
 
-    // 学生の追加（insert）
+    // 学生の追加
     public boolean insert(Student s) throws Exception {
         String sql = "INSERT INTO student (no, name, ent_year, class_num, is_attend, school_cd) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -139,4 +139,24 @@ public class StudentDAO extends DAO {
             return result == 1;
         }
     }
+ // 学生番号の重複チェック
+    public boolean exists(int no) throws Exception {
+        Connection con = getConnection();
+        PreparedStatement st = con.prepareStatement("SELECT COUNT(*) FROM student WHERE no = ?");
+        st.setInt(1, no);
+        ResultSet rs = st.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+        rs.close();
+        st.close();
+        con.close();
+        return count > 0;
+    }
+
+
+
+
 }
+
+
+
