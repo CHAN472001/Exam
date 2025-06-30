@@ -87,6 +87,6 @@
   </c:choose>
 </section>
 
-</div> <%-- containerの閉じタグ --%>
+</div>
 
 <%@ include file="../footer.html" %>
