@@ -41,11 +41,7 @@
     <label>クラス:</label>
     <input type="text" name="class_num" class="text" value="${class_num}" required>
 
-    <c:if test="${not empty errorSchoolCd}">
-      <div class="alert-box">⚠️ ${errorSchoolCd}</div>
-    </c:if>
-    <label>学校コード:</label>
-    <input type="text" name="school_cd" class="text" value="${school_cd}" required>
+
 
     <label>在学中:
       <input type="checkbox" name="is_attend" value="true"

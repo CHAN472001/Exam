@@ -11,11 +11,12 @@ import bean.Student;
 public class StudentDAO extends DAO {
 
     // 学生リストをフィルターして取得
-    public List<Student> filter(String f1, String f2, String f3) throws Exception {
+    public List<Student> filter(String f1, String f2, String f3, String schoolCd) throws Exception {
         List<Student> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM student WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT * FROM student WHERE school_cd = ?");
         List<Object> params = new ArrayList<>();
+        params.add(schoolCd);
 
         // 入学年度フィルター
         if (f1 != null && !f1.equals("0")) {
@@ -52,6 +53,7 @@ public class StudentDAO extends DAO {
                 s.setEntYear(rs.getInt("ent_year"));
                 s.setClassNum(rs.getInt("class_num"));
                 s.setAttend(rs.getBoolean("is_attend"));
+                s.setSchoolCd(rs.getString("school_cd"));
                 list.add(s);
             }
         }
@@ -59,62 +61,63 @@ public class StudentDAO extends DAO {
         return list;
     }
 
-    // 入学年度一覧の取得
-    public List<Integer> getEntYears() throws Exception {
+    // 入学年度一覧の取得（その学校コードの分だけ）
+    public List<Integer> getEntYears(String schoolCd) throws Exception {
         List<Integer> list = new ArrayList<>();
 
         try (Connection conn = getConnection();
              PreparedStatement st = conn.prepareStatement(
-                     "SELECT DISTINCT ent_year FROM student ORDER BY ent_year");
-             ResultSet rs = st.executeQuery()) {
-
-            while (rs.next()) {
-                list.add(rs.getInt("ent_year"));
+                     "SELECT DISTINCT ent_year FROM student WHERE school_cd = ? ORDER BY ent_year")) {
+            st.setString(1, schoolCd);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    list.add(rs.getInt("ent_year"));
+                }
             }
         }
 
         return list;
     }
 
-    // クラス番号一覧の取得
-    public List<Integer> getClassNums() throws Exception {
+    // クラス番号一覧の取得（学校コード限定）
+    public List<Integer> getClassNums(String schoolCd) throws Exception {
         List<Integer> list = new ArrayList<>();
 
         try (Connection conn = getConnection();
              PreparedStatement st = conn.prepareStatement(
-                     "SELECT DISTINCT class_num FROM student ORDER BY class_num");
-             ResultSet rs = st.executeQuery()) {
-
-            while (rs.next()) {
-                list.add(rs.getInt("class_num"));
+                     "SELECT DISTINCT class_num FROM student WHERE school_cd = ? ORDER BY class_num")) {
+            st.setString(1, schoolCd);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    list.add(rs.getInt("class_num"));
+                }
             }
         }
 
         return list;
     }
 
-    // 全学生を取得
-    public List<Student> findAll() throws Exception {
+    // 全学生を取得（学校コード限定）
+    public List<Student> findAll(String schoolCd) throws Exception {
         List<Student> list = new ArrayList<>();
 
-        String sql = "SELECT * FROM student";
+        String sql = "SELECT * FROM student WHERE school_cd = ? ORDER BY ent_year, class_num, no";
 
         try (Connection conn = getConnection();
-             PreparedStatement st = conn.prepareStatement(sql);
-             ResultSet rs = st.executeQuery()) {
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, schoolCd);
 
-            while (rs.next()) {
-                Student s = new Student();
-                s.setNo(rs.getInt("no"));
-                s.setName(rs.getString("name"));
-                s.setEntYear(rs.getInt("ent_year"));
-                s.setClassNum(rs.getInt("class_num"));
-                s.setAttend(rs.getBoolean("is_attend"));
-                s.setSchoolCd(rs.getString("school_cd"));
-
-                System.out.println("読み込み成功: " + s.getNo() + " " + s.getName()); // ←追加
-
-                list.add(s);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    Student s = new Student();
+                    s.setNo(rs.getInt("no"));
+                    s.setName(rs.getString("name"));
+                    s.setEntYear(rs.getInt("ent_year"));
+                    s.setClassNum(rs.getInt("class_num"));
+                    s.setAttend(rs.getBoolean("is_attend"));
+                    s.setSchoolCd(rs.getString("school_cd"));
+                    list.add(s);
+                }
             }
         }
 
@@ -139,24 +142,18 @@ public class StudentDAO extends DAO {
             return result == 1;
         }
     }
- // 学生番号の重複チェック
+
+    // 学生番号の重複チェック
     public boolean exists(int no) throws Exception {
-        Connection con = getConnection();
-        PreparedStatement st = con.prepareStatement("SELECT COUNT(*) FROM student WHERE no = ?");
-        st.setInt(1, no);
-        ResultSet rs = st.executeQuery();
-        rs.next();
-        int count = rs.getInt(1);
-        rs.close();
-        st.close();
-        con.close();
-        return count > 0;
+        try (Connection con = getConnection();
+             PreparedStatement st = con.prepareStatement("SELECT COUNT(*) FROM student WHERE no = ?")) {
+            st.setInt(1, no);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
-
-
-
-
 }
-
-
-

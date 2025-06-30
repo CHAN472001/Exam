@@ -7,10 +7,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<main class="content" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-  <p class="title" style="margin: 0;">
+<main class="content" style="display: flex; justify-content: center; align-items: center; padding: 10px 20px;">
+  <p class="title" style="margin: 0; font-size: 1.2em; display: flex; align-items: center; gap: 20px;">
     得点管理システム　<strong><%= teacher.getName() %></strong>
-    <a href="Logout.action" style="color: #007bff; text-decoration: underline; font-size: 0.9em;">
+    <a href="Logout.action"
+       style="color: #007bff; text-decoration: underline; font-size: 0.9em;">
       ログアウト
     </a>
   </p>
