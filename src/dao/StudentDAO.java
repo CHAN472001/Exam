@@ -143,11 +143,13 @@ public class StudentDAO extends DAO {
         }
     }
 
-    // 学生番号の重複チェック
-    public boolean exists(int no) throws Exception {
+ // 既に存在するか (no + schoolCd の組み合わせで重複判定)
+    public boolean exists(int no, String schoolCd) throws Exception {
         try (Connection con = getConnection();
-             PreparedStatement st = con.prepareStatement("SELECT COUNT(*) FROM student WHERE no = ?")) {
+             PreparedStatement st = con.prepareStatement(
+                 "SELECT COUNT(*) FROM student WHERE no = ? AND school_cd = ?")) {
             st.setInt(1, no);
+            st.setString(2, schoolCd);
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -156,4 +158,22 @@ public class StudentDAO extends DAO {
         }
         return false;
     }
+
+ // 既存クラスの続きに追加してください
+    public boolean update(Student s) throws Exception {
+        String sql = "UPDATE student SET name = ?, class_num = ?, is_attend = ? WHERE no = ? AND school_cd = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+          st.setString(1, s.getName());
+          st.setInt(2, s.getClassNum());
+          st.setBoolean(3, s.isAttend());
+          st.setInt(4, s.getNo());
+          st.setString(5, s.getSchoolCd());
+
+          int result = st.executeUpdate();
+          return result == 1;
+        }
+    }
+
 }

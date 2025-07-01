@@ -32,7 +32,7 @@ public class StudentCreateAction extends Action {
         List<Integer> entYearList = new ArrayList<>();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         for (int i = 0; i < 10; i++) {
-            entYearList.add(currentYear - i); // 新しい順に追加（例: 2025, 2024, ..., 2016）
+            entYearList.add(currentYear - i);
         }
         request.setAttribute("entYearList", entYearList);
 
@@ -111,10 +111,12 @@ public class StudentCreateAction extends Action {
         }
 
         // 重複チェック
-        if (dao.exists(no)) {
+     // 重複チェックを変更 (no + schoolCd)
+        if (dao.exists(no, schoolCd)) {
             request.setAttribute("errorNo", "その学生番号は既に存在します。");
             return "student_create.jsp";
         }
+
 
         Student student = new Student();
         student.setNo(no);

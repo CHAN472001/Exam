@@ -27,6 +27,6 @@
     <ul>
       <li><a href="../kadai/insert">成績登録</a></li>
       <li><a href="../kadai/update">成績参照</a></li>
-      <li><a href="../kadai/delete">科目管理</a></li>
+      <li><a href="../tokuten_kanri/SubjectList.action">科目管理</a></li>
     </ul>
   </nav>

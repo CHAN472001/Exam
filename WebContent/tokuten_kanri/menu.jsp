@@ -63,7 +63,7 @@
     </div>
 
     <div class="box box-subject">
-      <a href="../kadai/delete">科目管理</a>
+      <a href="../tokuten_kanri/SubjectList.action">科目管理</a>
     </div>
   </div>
 </section>
