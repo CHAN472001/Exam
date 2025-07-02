@@ -18,19 +18,14 @@ public class StudentDAO extends DAO {
         List<Object> params = new ArrayList<>();
         params.add(schoolCd);
 
-        // 入学年度フィルター
         if (f1 != null && !f1.equals("0")) {
             sql.append(" AND ent_year = ?");
             params.add(Integer.parseInt(f1));
         }
-
-        // クラス番号フィルター
         if (f2 != null && !f2.equals("0")) {
             sql.append(" AND class_num = ?");
             params.add(Integer.parseInt(f2));
         }
-
-        // 在学中フィルター
         if (f3 != null && f3.equals("t")) {
             sql.append(" AND is_attend = true");
         }
@@ -61,13 +56,12 @@ public class StudentDAO extends DAO {
         return list;
     }
 
-    // 入学年度一覧の取得（その学校コードの分だけ）
+    // 入学年度一覧
     public List<Integer> getEntYears(String schoolCd) throws Exception {
         List<Integer> list = new ArrayList<>();
-
         try (Connection conn = getConnection();
              PreparedStatement st = conn.prepareStatement(
-                     "SELECT DISTINCT ent_year FROM student WHERE school_cd = ? ORDER BY ent_year")) {
+                 "SELECT DISTINCT ent_year FROM student WHERE school_cd = ? ORDER BY ent_year")) {
             st.setString(1, schoolCd);
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
@@ -75,17 +69,15 @@ public class StudentDAO extends DAO {
                 }
             }
         }
-
         return list;
     }
 
-    // クラス番号一覧の取得（学校コード限定）
+    // クラス番号一覧
     public List<Integer> getClassNums(String schoolCd) throws Exception {
         List<Integer> list = new ArrayList<>();
-
         try (Connection conn = getConnection();
              PreparedStatement st = conn.prepareStatement(
-                     "SELECT DISTINCT class_num FROM student WHERE school_cd = ? ORDER BY class_num")) {
+                 "SELECT DISTINCT class_num FROM student WHERE school_cd = ? ORDER BY class_num")) {
             st.setString(1, schoolCd);
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
@@ -93,20 +85,17 @@ public class StudentDAO extends DAO {
                 }
             }
         }
-
         return list;
     }
 
-    // 全学生を取得（学校コード限定）
+    // 全学生取得
     public List<Student> findAll(String schoolCd) throws Exception {
         List<Student> list = new ArrayList<>();
-
         String sql = "SELECT * FROM student WHERE school_cd = ? ORDER BY ent_year, class_num, no";
 
         try (Connection conn = getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, schoolCd);
-
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
                     Student s = new Student();
@@ -120,11 +109,10 @@ public class StudentDAO extends DAO {
                 }
             }
         }
-
         return list;
     }
 
-    // 学生の追加
+    // 学生追加
     public boolean insert(Student s) throws Exception {
         String sql = "INSERT INTO student (no, name, ent_year, class_num, is_attend, school_cd) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -143,7 +131,7 @@ public class StudentDAO extends DAO {
         }
     }
 
- // 既に存在するか (no + schoolCd の組み合わせで重複判定)
+    // 学生存在確認
     public boolean exists(int no, String schoolCd) throws Exception {
         try (Connection con = getConnection();
              PreparedStatement st = con.prepareStatement(
@@ -151,29 +139,74 @@ public class StudentDAO extends DAO {
             st.setInt(1, no);
             st.setString(2, schoolCd);
             try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
+                return rs.next() && rs.getInt(1) > 0;
             }
         }
-        return false;
     }
 
- // 既存クラスの続きに追加してください
+    // 学生更新
     public boolean update(Student s) throws Exception {
         String sql = "UPDATE student SET name = ?, class_num = ?, is_attend = ? WHERE no = ? AND school_cd = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement st = conn.prepareStatement(sql)) {
-          st.setString(1, s.getName());
-          st.setInt(2, s.getClassNum());
-          st.setBoolean(3, s.isAttend());
-          st.setInt(4, s.getNo());
-          st.setString(5, s.getSchoolCd());
+            st.setString(1, s.getName());
+            st.setInt(2, s.getClassNum());
+            st.setBoolean(3, s.isAttend());
+            st.setInt(4, s.getNo());
+            st.setString(5, s.getSchoolCd());
 
-          int result = st.executeUpdate();
-          return result == 1;
+            int result = st.executeUpdate();
+            return result == 1;
         }
+    }
+
+    // ★ 成績参照：条件検索用に追加
+    public Student findByNo(int no, String schoolCd) throws Exception {
+        String sql = "SELECT * FROM student WHERE no = ? AND school_cd = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, no);
+            st.setString(2, schoolCd);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    Student s = new Student();
+                    s.setNo(rs.getInt("no"));
+                    s.setName(rs.getString("name"));
+                    s.setEntYear(rs.getInt("ent_year"));
+                    s.setClassNum(rs.getInt("class_num"));
+                    s.setAttend(rs.getBoolean("is_attend"));
+                    s.setSchoolCd(rs.getString("school_cd"));
+                    return s;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Student> findByEntYearAndClass(int entYear, int classNum, String schoolCd) throws Exception {
+        List<Student> list = new ArrayList<>();
+        String sql = "SELECT * FROM student WHERE school_cd = ? AND ent_year = ? AND class_num = ? ORDER BY no";
+
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, schoolCd);
+            st.setInt(2, entYear);
+            st.setInt(3, classNum);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    Student s = new Student();
+                    s.setNo(rs.getInt("no"));
+                    s.setName(rs.getString("name"));
+                    s.setEntYear(rs.getInt("ent_year"));
+                    s.setClassNum(rs.getInt("class_num"));
+                    s.setAttend(rs.getBoolean("is_attend"));
+                    s.setSchoolCd(rs.getString("school_cd"));
+                    list.add(s);
+                }
+            }
+        }
+        return list;
     }
 
 }

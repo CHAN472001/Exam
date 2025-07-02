@@ -91,4 +91,13 @@ public class SubjectDAO extends DAO {
             return result == 1;
         }
     }
+
+    // 存在しない場合のみ INSERT する（Upsert に近い用途）
+    public boolean insertIfNotExists(Subject s) throws Exception {
+        if (!exists(s.getCd(), s.getSchoolCd())) {
+            return insert(s);
+        }
+        return false; // 既に存在していたら何もしない
+    }
+
 }

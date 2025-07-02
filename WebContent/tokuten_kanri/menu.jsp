@@ -58,8 +58,8 @@
 
     <div class="box box-score">
       <h4>成績管理</h4>
-      <a href="../kadai/insert">成績登録</a>
-      <a href="../kadai/update">成績参照</a>
+      <a href="../tokuten_kanri/TestRegist.action">成績登録</a>
+      <a href="../tokuten_kanri/TestList.action">成績参照</a>
     </div>
 
     <div class="box box-subject">

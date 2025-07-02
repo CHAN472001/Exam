@@ -1,14 +1,17 @@
 package bean;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class Student implements Serializable {
     private int no;
     private String name;
-    private int entYear;    // 入学年度
-    private int classNum;   // クラス番号
-    private boolean attend; // 在学中フラグ
-    private String schoolCd; // 追加された場合のため
+    private int entYear;
+    private int classNum;
+    private boolean isAttend;
+    private String schoolCd;
+
+    private Map<Integer, Integer> points; // ← 追加：回数 → 点数
 
     public int getNo() { return no; }
     public void setNo(int no) { this.no = no; }
@@ -22,9 +25,12 @@ public class Student implements Serializable {
     public int getClassNum() { return classNum; }
     public void setClassNum(int classNum) { this.classNum = classNum; }
 
-    public boolean isAttend() { return attend; }
-    public void setAttend(boolean attend) { this.attend = attend; }
+    public boolean isAttend() { return isAttend; }
+    public void setAttend(boolean isAttend) { this.isAttend = isAttend; }
 
     public String getSchoolCd() { return schoolCd; }
     public void setSchoolCd(String schoolCd) { this.schoolCd = schoolCd; }
+
+    public Map<Integer, Integer> getPoints() { return points; }
+    public void setPoints(Map<Integer, Integer> points) { this.points = points; }
 }

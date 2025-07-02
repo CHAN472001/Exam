@@ -19,14 +19,15 @@
 
 <div class="container" style="display: flex; gap: 20px;">
   <nav class="menu" style="width: 20%; border-right: 2px solid #ccc; padding: 10px;">
-    <p><strong>メニュー</strong></p>
+    <li><a href="../tokuten_kanri/menu.jsp">メニュー</a></li>
     <ul>
       <li><a href="../tokuten_kanri/StudentList.action">学生管理</a></li>
     </ul>
     <p style="margin: 0;">成績管理</p>
     <ul>
-      <li><a href="../kadai/insert">成績登録</a></li>
-      <li><a href="../kadai/update">成績参照</a></li>
+        <a href="../tokuten_kanri/TestRegist.action">成績登録</a>
+      <li><a href="../tokuten_kanri/TestList.action">成績参照</a></li>
       <li><a href="../tokuten_kanri/SubjectList.action">科目管理</a></li>
     </ul>
   </nav>
+
