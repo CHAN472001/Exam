@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import bean.Student;
+import bean.Subject;
 import bean.Teacher;
 import bean.Test;
 import dao.StudentDAO;
@@ -37,15 +38,29 @@ public class TestListAction extends Action {
         // プルダウン用
         List<Integer> entYears = studentDAO.getEntYears(schoolCd);
         List<Integer> classNums = studentDAO.getClassNums(schoolCd);
+        List<Subject> subjects = subjectDAO.findAll(schoolCd);
+
         request.setAttribute("entYears", entYears);
         request.setAttribute("classNums", classNums);
-        request.setAttribute("subjects", subjectDAO.findAll(schoolCd));
+        request.setAttribute("subjects", subjects);
 
         if (studentNoStr != null && !studentNoStr.isEmpty()) {
             // 学生別検索
             int studentNo = Integer.parseInt(studentNoStr);
+
             List<Test> tests = testDAO.findByStudent(schoolCd, studentNo);
-            request.setAttribute("studentTests", tests);
+            request.setAttribute("testListByStudent", tests);
+
+            Student student = studentDAO.findByNo(studentNo, schoolCd);
+            request.setAttribute("student", student);
+
+            // 科目コードと名前のマップを生成
+            Map<String, String> subjectMap = new HashMap<>();
+            for (Subject s : subjects) {
+                subjectMap.put(s.getCd(), s.getName());
+            }
+            request.setAttribute("subjectMap", subjectMap);
+
             return "test_list.jsp";
         }
 
@@ -61,7 +76,6 @@ public class TestListAction extends Action {
             // 対象成績を取得（複数回数）
             List<Test> tests = testDAO.findByClassAndSubjectAllNos(schoolCd, entYear, classNum, subjectCd);
 
-            // 学生ごとに点数を詰める
             Map<Integer, Student> map = new LinkedHashMap<>();
             for (Student s : students) {
                 s.setPoints(new HashMap<>());
@@ -71,14 +85,18 @@ public class TestListAction extends Action {
             int maxNo = 0;
             for (Test t : tests) {
                 Student s = map.get(t.getStudentNo());
-                if (s != null) {
+                if (s != null && t.getNo() > 0) {
                     s.getPoints().put(t.getNo(), t.getPoint());
                     if (t.getNo() > maxNo) maxNo = t.getNo();
                 }
             }
 
-            request.setAttribute("students", map.values());
+            request.setAttribute("studentsWithScores", map.values());
             request.setAttribute("maxNo", maxNo);
+            request.setAttribute("selectedSubject", subjectDAO.findByPrimaryKey(schoolCd, subjectCd));
+
+            // JSP 側の c:if に合わせて追加
+            request.setAttribute("testListByClass", tests);
 
             return "test_list.jsp";
         }
