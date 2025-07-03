@@ -92,12 +92,37 @@ public class SubjectDAO extends DAO {
         }
     }
 
-    // 存在しない場合のみ INSERT する（Upsert に近い用途）
-    public boolean insertIfNotExists(Subject s) throws Exception {
-        if (!exists(s.getCd(), s.getSchoolCd())) {
-            return insert(s);
+    //削除(科目管理の画面)
+    public void delete(String cd) throws Exception {
+        Connection connection = getConnection();
+        String sql = "DELETE FROM subject WHERE cd = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, cd);
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
+    }
+
+    public Subject get(String cd) throws Exception {
+        Subject subject = null;
+
+        Connection connection = getConnection();
+        String sql = "SELECT * FROM subject WHERE cd = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, cd);
+        ResultSet rs = statement.executeQuery();
+
+        if (rs.next()) {
+            subject = new Subject();
+            subject.setCd(rs.getString("cd"));
+            subject.setName(rs.getString("name"));
         }
-        return false; // 既に存在していたら何もしない
+
+        rs.close();
+        statement.close();
+        connection.close();
+
+        return subject;
     }
 
 }
