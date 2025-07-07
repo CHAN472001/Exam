@@ -208,5 +208,15 @@ public class StudentDAO extends DAO {
         }
         return list;
     }
+    public void delete(int studentNo, String schoolCd) throws Exception {
+        try (Connection con = getConnection()) {
+            String sql = "DELETE FROM student WHERE no = ? AND school_cd = ?";
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setInt(1, studentNo);
+            st.setString(2, schoolCd);
+            st.executeUpdate();
+        }
+    }
+
 
 }

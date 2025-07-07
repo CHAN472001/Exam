@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../header.html" %>
 <%@ page import="bean.Teacher" %>
+
+
+
 <%
   Teacher teacher = (Teacher) session.getAttribute("teacher");
 %>
@@ -25,7 +28,7 @@
     </ul>
     <p style="margin: 0;">成績管理</p>
     <ul>
-        <a href="../tokuten_kanri/TestRegist.action">成績登録</a>
+      <li><a href="../tokuten_kanri/TestRegist.action">成績登録</a></li>
       <li><a href="../tokuten_kanri/TestList.action">成績参照</a></li>
       <li><a href="../tokuten_kanri/SubjectList.action">科目管理</a></li>
     </ul>
