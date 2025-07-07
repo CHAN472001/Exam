@@ -35,7 +35,7 @@ public class TestListAction extends Action {
         SubjectDAO subjectDAO = new SubjectDAO();
         TestDAO testDAO = new TestDAO();
 
-        // プルダウン用
+        // プルダウン用データ取得
         List<Integer> entYears = studentDAO.getEntYears(schoolCd);
         List<Integer> classNums = studentDAO.getClassNums(schoolCd);
         List<Subject> subjects = subjectDAO.findAll(schoolCd);
@@ -47,14 +47,18 @@ public class TestListAction extends Action {
         if (studentNoStr != null && !studentNoStr.isEmpty()) {
             // 学生別検索
             int studentNo = Integer.parseInt(studentNoStr);
-
             List<Test> tests = testDAO.findByStudent(schoolCd, studentNo);
-            request.setAttribute("testListByStudent", tests);
+
+            if (tests == null || tests.isEmpty()) {
+                request.setAttribute("noScoresMessage", "成績情報が存在しません。");
+                request.setAttribute("testListByStudent", null);
+            } else {
+                request.setAttribute("testListByStudent", tests);
+            }
 
             Student student = studentDAO.findByNo(studentNo, schoolCd);
             request.setAttribute("student", student);
 
-            // 科目コードと名前のマップを生成
             Map<String, String> subjectMap = new HashMap<>();
             for (Subject s : subjects) {
                 subjectMap.put(s.getCd(), s.getName());
@@ -70,34 +74,34 @@ public class TestListAction extends Action {
             int entYear = Integer.parseInt(entYearStr);
             int classNum = Integer.parseInt(classNumStr);
 
-            // 対象学生を取得
             List<Student> students = studentDAO.findByEntYearAndClass(entYear, classNum, schoolCd);
-
-            // 対象成績を取得（複数回数）
             List<Test> tests = testDAO.findByClassAndSubjectAllNos(schoolCd, entYear, classNum, subjectCd);
 
-            Map<Integer, Student> map = new LinkedHashMap<>();
-            for (Student s : students) {
-                s.setPoints(new HashMap<>());
-                map.put(s.getNo(), s);
-            }
-
-            int maxNo = 0;
-            for (Test t : tests) {
-                Student s = map.get(t.getStudentNo());
-                if (s != null && t.getNo() > 0) {
-                    s.getPoints().put(t.getNo(), t.getPoint());
-                    if (t.getNo() > maxNo) maxNo = t.getNo();
+            if (tests == null || tests.isEmpty()) {
+                request.setAttribute("noScoresMessage", "成績情報が存在しません。");
+                request.setAttribute("studentsWithScores", null);
+                request.setAttribute("testListByClass", null);
+            } else {
+                Map<Integer, Student> map = new LinkedHashMap<>();
+                for (Student s : students) {
+                    s.setPoints(new HashMap<>());
+                    map.put(s.getNo(), s);
                 }
+
+                int maxNo = 0;
+                for (Test t : tests) {
+                    Student s = map.get(t.getStudentNo());
+                    if (s != null && t.getNo() > 0) {
+                        s.getPoints().put(t.getNo(), t.getPoint());
+                        if (t.getNo() > maxNo) maxNo = t.getNo();
+                    }
+                }
+
+                request.setAttribute("studentsWithScores", map.values());
+                request.setAttribute("maxNo", maxNo);
+                request.setAttribute("selectedSubject", subjectDAO.findByPrimaryKey(schoolCd, subjectCd));
+                request.setAttribute("testListByClass", tests);
             }
-
-            request.setAttribute("studentsWithScores", map.values());
-            request.setAttribute("maxNo", maxNo);
-            request.setAttribute("selectedSubject", subjectDAO.findByPrimaryKey(schoolCd, subjectCd));
-
-            // JSP 側の c:if に合わせて追加
-            request.setAttribute("testListByClass", tests);
-
             return "test_list.jsp";
         }
 

@@ -6,7 +6,7 @@
 
   <h2 class="h3 mb-3 fw-normal bg-secondary bg-opacity-10 py-2 px-4" style="text-align:center;">成績参照</h2>
 
-  <!-- 科目別検索フォーム -->
+  <!-- 科目別検索 -->
   <form method="get" action="TestList.action" class="px-4" style="margin-bottom:20px;">
     <h3>科目情報</h3>
 
@@ -37,7 +37,7 @@
     <button type="submit">科目別検索</button>
   </form>
 
-  <!-- 学生別検索フォーム -->
+  <!-- 学生別検索 -->
   <form method="get" action="TestList.action" class="px-4">
     <h3>学生情報</h3>
 
@@ -46,6 +46,11 @@
 
     <button type="submit">学生別検索</button>
   </form>
+
+  <!-- 成績がない場合 -->
+  <c:if test="${not empty noScoresMessage}">
+    <p style="color:red; text-align:center;">${noScoresMessage}</p>
+  </c:if>
 
   <!-- 科目別結果表示 -->
   <c:if test="${not empty testListByClass}">
@@ -80,7 +85,7 @@
   </c:if>
 
   <!-- 学生別結果表示 -->
-  <c:if test="${not empty student}">
+  <c:if test="${not empty testListByStudent}">
     <h4 style="margin-top:30px;">学生別 成績一覧</h4>
     <p>学生番号: ${student.no}</p>
     <p>氏名: ${student.name}</p>

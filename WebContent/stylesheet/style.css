@@ -139,3 +139,47 @@ th, td {
     padding: 8px;
     text-align: left;
 }
+/* 学生一覧テーブルをよりきれいにする（JSP変更なし） */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+table thead th {
+  background-color: #e3f2fd; /* 明るめの青系 */
+  color: #333;
+  padding: 12px 8px;
+  border-bottom: 2px solid #90caf9;
+  text-align: center;
+}
+
+table tbody td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* ストライプ */
+}
+
+table tbody tr:hover {
+  background-color: #f1f1f1; /* hover時 */
+}
+
+table a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+table a:hover {
+  text-decoration: underline;
+}
+.submit {
+  width: 100%;
+  /* ... */
+}

@@ -6,9 +6,10 @@
 
   <p class="text-center mt-4">科目を登録しました。</p>
 
-  <p style="text-align: center; margin-top: 15px;">
-    <a href="SubjectList.action" class="submit" style="text-decoration:none;">科目一覧に戻る</a>
-  </p>
+  <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+    <a href="SubjectCreate.action" class="submit" style="text-decoration: none;">もどる</a>
+    <a href="SubjectList.action" class="submit" style="text-decoration: none;">科目一覧</a>
+  </div>
 </section>
 
 </div>
