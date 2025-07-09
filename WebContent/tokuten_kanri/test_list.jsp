@@ -2,7 +2,29 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="base.jsp" %>
 
-<section style="flex:1;">
+<style>
+.form-container {
+  display: flex;
+  gap: 20px; /*間隔を広げたい場合の奴*/
+  justify-content: center;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.search-box {
+  border: 1px solid #ccc;
+  padding: 15px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 500px;
+  flex: 1; /*widthからの奴は横幅に応じて広げてくれる*/
+}
+</style>
+
+<section style="flex: 1; padding: 20px;">
+
 
   <h2 class="title">成績参照</h2>
 

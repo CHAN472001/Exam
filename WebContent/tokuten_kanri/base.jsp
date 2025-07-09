@@ -2,8 +2,6 @@
 <%@ include file="../header.html" %>
 <%@ page import="bean.Teacher" %>
 
-
-
 <%
   Teacher teacher = (Teacher) session.getAttribute("teacher");
 %>
