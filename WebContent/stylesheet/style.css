@@ -180,6 +180,7 @@ table a {
 table a:hover {
   text-decoration: underline;
 }
+<<<<<<< HEAD
 
 .form-title {
   font-weight: bold;
@@ -213,4 +214,9 @@ table a:hover {
   box-sizing: border-box;
   border: 1px solid #cbd6e2;
   border-radius: 5px;
+=======
+.submit {
+  width: 100%;
+  /* ... */
+>>>>>>> branch 'master' of https://github.com/CHAN472001/Exam.git
 }
