@@ -72,7 +72,12 @@
       <button type="submit" class="form-button">学生別検索</button>
     </form>
 
-  </div>
+    <!-- 成績がない場合 -->
+  <c:if test="${not empty noScoresMessage}">
+    <p style="color:red; text-align:center;">${noScoresMessage}</p>
+  </c:if>
+
+ </div>
 
   <!-- 科目別結果表示 -->
   <c:if test="${not empty testListByClass}">
